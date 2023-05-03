@@ -6,6 +6,12 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseFirestoreSwift
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
+import FirebaseStorage
 
 class FeedCell: UITableViewCell {
 
@@ -13,6 +19,7 @@ class FeedCell: UITableViewCell {
     @IBOutlet weak var commentLabel: UILabel!
     @IBOutlet weak var userimageView: UIImageView!
     @IBOutlet weak var likeLabel: UILabel!
+    @IBOutlet weak var documentidLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -26,6 +33,20 @@ class FeedCell: UITableViewCell {
     }
     
     @IBAction func likeButtonClicked(_ sender: Any) {
+        
+        let fireStoreDatabase = Firestore.firestore()
+        
+        if let likeCount = Int(likeLabel.text!){
+            
+            let likeStore = ["likes" : likeCount + 1] as [String : Any]
+            
+            fireStoreDatabase.collection("Posts").document(documentidLabel.text!).setData(likeStore, merge: true) // sadece like ı güncelle digerlerine dokunma.
+        }
+        
+        
+        
+        
+        
     }
     
     

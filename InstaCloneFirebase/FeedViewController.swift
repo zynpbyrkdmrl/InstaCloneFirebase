@@ -23,6 +23,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     var userCommentArray = [String]()
     var likeArray = [Int]()
     var userImageArray = [String]()
+    var documentIDArray = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +39,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     
         let fireStoreDatabase = Firestore.firestore()
         //snapshot içerisinde çektiğim dokümanlar bana verilecek,array şeklinde
-        fireStoreDatabase.collection("Posts").addSnapshotListener { snapshot, error in
+        fireStoreDatabase.collection("Posts").order(by: "date", descending: true).addSnapshotListener { snapshot, error in
             if error != nil {
                 print(error?.localizedDescription)
             }else{
@@ -49,10 +50,14 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
                     self.userEmailArray.removeAll(keepingCapacity: false)
                     self.userCommentArray.removeAll(keepingCapacity: false)
                     self.likeArray.removeAll(keepingCapacity: false)
+                    self.documentIDArray.removeAll(keepingCapacity: false)
+                    
                     
                     
                     for document in snapshot!.documents {
                         let documentID = document.documentID
+                        self.documentIDArray.append (documentID)
+                        
                         
                         if let postedBy = document.get("postedBy") as? String{
                             self.userEmailArray.append(postedBy)
@@ -88,6 +93,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.likeLabel.text = String(likeArray[indexPath.row])
         cell.commentLabel.text = userCommentArray [indexPath.row]
         cell.userimageView.sd_setImage(with: URL(string: self.userImageArray[indexPath.row]))
+        cell.documentidLabel.text = documentIDArray[indexPath.row]
         
         return cell
     }
